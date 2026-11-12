@@ -1,0 +1,36 @@
+# Автоматична збірка і тестування на GitHub (Windows, .NET 8).
+# Запускається при кожному push і pull request. Результати видно на вкладці Actions,
+# а звіт тестів (trx) можна завантажити як артефакт.
+name: Build and test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore DrivingSchool.sln
+
+      - name: Build
+        run: dotnet build DrivingSchool.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test DrivingSchool.sln --configuration Release --no-build --logger "trx;LogFileName=test-results.trx" --logger "console;verbosity=normal"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/TestResults/*.trx'
