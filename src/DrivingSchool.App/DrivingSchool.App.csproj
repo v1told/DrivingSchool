@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>DrivingSchool.App</RootNamespace>
+    <AssemblyName>DrivingSchool</AssemblyName>
+    <!-- EmbedCore=true: код бібліотеки DrivingSchool.Core компілюється прямо в застосунок.
+         Потрібно на ПК з увімкненим Smart App Control, який блокує окремі непідписані DLL. -->
+    <EmbedCore Condition="'$(EmbedCore)' == ''">false</EmbedCore>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(EmbedCore)' != 'true'">
+    <ProjectReference Include="..\DrivingSchool.Core\DrivingSchool.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(EmbedCore)' == 'true'">
+    <Compile Include="..\DrivingSchool.Core\**\*.cs" Exclude="..\DrivingSchool.Core\obj\**;..\DrivingSchool.Core\bin\**" LinkBase="Core" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.11" />
+    <Using Include="System.IO" />
+  </ItemGroup>
+
+</Project>
