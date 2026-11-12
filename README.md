@@ -1,70 +1,55 @@
 # Автошкола: система формування та управління розкладом занять
 
-Спільний курсовий проєкт з дисципліни «Об'єктно-орієнтоване програмування».
-Мова C#, платформа .NET 8, інтерфейс WPF (MVVM), база даних SQLite через Entity Framework Core, тести xUnit.
+Спільний курсовий проєкт двох студенток з дисципліни «Об'єктно-орієнтоване програмування».
+Мова C#, платформа .NET 8, інтерфейс WPF (MVVM), база даних SQLite через Entity Framework Core, модульні тести xUnit.
 
 ## Запуск
 
-1. Встановити Visual Studio 2022 (17.8 або новіша) з робочим навантаженням «.NET desktop development».
-2. Відкрити `DrivingSchool.sln`.
-3. Дочекатися відновлення пакетів NuGet (відбувається автоматично).
-4. Зробити `DrivingSchool.App` стартовим проєктом і натиснути F5.
+**Visual Studio 2022** (17.8+, компонент «.NET desktop development»): відкрити `DrivingSchool.sln`,
+зробити `DrivingSchool.App` стартовим проєктом і натиснути F5. Пакети NuGet відновлюються автоматично.
 
-Під час першого запуску поруч із програмою створюється файл `drivingschool.db`
-з демонстраційними даними: 4 автомобілі, 4 викладачі, 2 групи, 10 учнів,
-розклад за три минулі, поточний і наступний тижні, записи, відвідування й оцінки.
-Щоб почати з чистої бази, достатньо видалити цей файл.
+**Без Visual Studio** (потрібен .NET 8 SDK):
+- `1_ЗБІРКА_І_ТЕСТИ.cmd` збирає рішення, запускає всі тести і зберігає результат у `test-log.txt`;
+- `2_ЗАПУСК_ПРОГРАМИ.cmd` збирає і запускає програму. Якщо в Windows 11 увімкнено Smart App Control,
+  він блокує окремі непідписані DLL, тому цей файл збирає програму з вбудованою бібліотекою
+  (параметр `-p:EmbedCore=true`).
 
-Тести: меню Test → Run All Tests (або `dotnet test` у теці рішення).
+**База даних** створюється автоматично під час першого запуску (`drivingschool.db` поруч із програмою)
+і наповнюється демонстраційними даними: 4 автомобілі, 4 викладачі, 2 групи, 10 учнів, розклад
+за п'ять тижнів, записи, відвідування й оцінки. Щоб почати з чистої бази, достатньо видалити файл.
+
+## Тестування
+
+```
+dotnet test DrivingSchool.sln
+```
+
+30 тестових методів (33 тестові випадки): `SchedulingTests` (модуль 1) і `LearningTests` (модуль 2).
+Результат локального запуску на Windows 11, .NET SDK 8.0.428: **Всього тестів: 33, пройдено: 33**.
+Ту саму збірку і тести автоматично виконує GitHub Actions (вкладка **Actions**) при кожному push.
 
 ## Структура рішення
 
 ```
 DrivingSchool.sln
-├── src/DrivingSchool.Core          бібліотека бізнес-логіки (без інтерфейсу)
+├── src/DrivingSchool.Core          бібліотека бізнес-логіки
 │   ├── Models/                     класи предметної області (спільні)
 │   ├── Data/                       AppDbContext, DbInitializer (спільні)
-│   ├── Common/                     IEntity, Repository<T>, IClock, DomainException
+│   ├── Common/                     IEntity, Repository<T>, IClock, DrivingHoursCalculator (спільні)
 │   ├── Scheduling/                 МОДУЛЬ 1: облік ресурсів і формування розкладу
 │   └── Learning/                   МОДУЛЬ 2: запис, відвідування, успішність
 ├── src/DrivingSchool.App           WPF-застосунок (MVVM)
-│   ├── Infrastructure/             ViewModelBase, RelayCommand, Db, Lookups
-│   ├── ViewModels/, Views/         вкладки обох модулів
 └── tests/DrivingSchool.Tests       модульні тести xUnit
 ```
 
 ## Розподіл функціоналу
 
-| Студентка 1: облік ресурсів і розклад | Студентка 2: запис, відвідування, прогрес |
+| Студентка 1: облік ресурсів і розклад (гілка `feature/scheduling`, PR #1) | Студентка 2: запис, відвідування, прогрес (гілка `feature/learning`, PR #2) |
 |---|---|
-| `Scheduling/ResourceService` | `Learning/BookingService` |
-| `Scheduling/ScheduleRules`, `ScheduleConflictChecker` | `Learning/AttendanceService` |
-| `Scheduling/ScheduleService`, `ScheduleGenerator` | `Learning/ProgressService`, `ReportService`, `LearningPolicy` |
-| `CrudViewModel<T>`, `Students/Instructors/Vehicles/Groups/ScheduleViewModel` | `Booking/Attendance/ProgressViewModel` |
-| `StudentsView`, `InstructorsView`, `VehiclesView`, `GroupsView`, `ScheduleView` | `BookingView`, `AttendanceView`, `ProgressView` |
+| `Scheduling/ResourceService` – облік учнів, інструкторів, автомобілів, груп | `Learning/BookingService` – запис на слоти водіння, ліміти, залишок годин |
+| `Scheduling/ScheduleRules`, `ScheduleConflictChecker` – 7 правил розкладу | `Learning/AttendanceService` – журнал відвідувань після завершення заняття, оцінки |
+| `Scheduling/ScheduleService`, `ScheduleGenerator` – ручне і автоматичне формування розкладу | `Learning/ProgressService`, `ReportService` – прогрес, допуск до іспитів, звіт CSV |
+| Вкладки «Учні», «Інструктори», «Автомобілі», «Групи», «Розклад» | Вкладки «Запис на водіння», «Журнал відвідувань», «Успішність і прогрес» |
 | `SchedulingTests` | `LearningTests` |
 
-Спільна частина (`Models`, `Data`, `Common`, `MainWindow`, `App`) розробляється разом.
-
-## Спільний репозиторій GitHub (історія комітів обох студенток)
-
-1. Перша студентка створює **порожній** репозиторій `DrivingSchool` на GitHub і запускає з кореня цієї папки:
-   `powershell -ExecutionPolicy Bypass -File scripts\student1.ps1 https://github.com/<логін>/DrivingSchool.git`.
-   Скрипт робить коміти спільної частини і модуля 1 у гілках `main` і `feature/scheduling` від її імені.
-2. Вона додає другу студентку як Collaborator (Settings → Collaborators).
-3. Друга студентка з кореня своєї копії папки запускає
-   `powershell -ExecutionPolicy Bypass -File scripts\student2.ps1 https://github.com/<логін>/DrivingSchool.git`.
-   Скрипт робить коміти модуля 2 у гілці `feature/learning` від її імені.
-4. Обидві гілки вливаються в `main` через Pull Request. Внесок видно в Insights → Contributors і `git log --author`.
-
-## Підтвердження збірки і тестів
-
-Файл `.github/workflows/build-and-test.yml` запускає на GitHub (Windows, .NET 8) команди
-`dotnet restore`, `dotnet build` і `dotnet test` при кожному push. Результат (кількість пройдених тестів)
-видно на вкладці **Actions**, звіт `test-results.trx` можна завантажити. Локально те саме:
-
-```
-dotnet test DrivingSchool.sln --logger "console;verbosity=normal"
-```
-
-У проєкті 30 тестових методів (11 у SchedulingTests, 19 у LearningTests), що дають 33 тестові випадки, бо параметризовані тести виконуються для кожного набору даних.
+Спільна частина (моделі, база даних, правило обліку годин, головне вікно) створена разом.
