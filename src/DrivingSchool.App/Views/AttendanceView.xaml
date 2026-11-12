@@ -1,0 +1,64 @@
+<UserControl x:Class="DrivingSchool.App.Views.AttendanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:infra="clr-namespace:DrivingSchool.App.Infrastructure">
+    <DockPanel Margin="6">
+        <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" Foreground="Gray" Margin="0,6,0,0"/>
+        <WrapPanel DockPanel.Dock="Top">
+            <Button Content="◀ Попередній" Command="{Binding PrevWeekCommand}"/>
+            <Button Content="Наступний ▶" Command="{Binding NextWeekCommand}"/>
+            <TextBlock Text="{Binding WeekTitle}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="8,0,0,6"/>
+        </WrapPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.2*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="260"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.Column="0" Margin="0,0,10,0">
+                <TextBlock DockPanel.Dock="Top" Text="Заняття, що завершилися" Style="{StaticResource Header}"/>
+                <DataGrid ItemsSource="{Binding Lessons}" SelectedItem="{Binding SelectedLesson}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="День" Binding="{Binding Day}" Width="110"/>
+                        <DataGridTextColumn Header="Час" Binding="{Binding Time}" Width="90"/>
+                        <DataGridTextColumn Header="Вид" Binding="{Binding Kind}" Width="65"/>
+                        <DataGridTextColumn Header="Група / учень" Binding="{Binding Participants}" Width="*"/>
+                        <DataGridTextColumn Header="Стан" Binding="{Binding Status}" Width="90"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+            <DockPanel Grid.Column="1" Margin="0,0,10,0">
+                <TextBlock DockPanel.Dock="Top" Text="Журнал заняття" Style="{StaticResource Header}"/>
+                <WrapPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                    <Button Content="Усі присутні" Command="{Binding AllPresentCommand}"/>
+                    <Button Content="Зберегти відмітки" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}"/>
+                </WrapPanel>
+                <DataGrid ItemsSource="{Binding Journal}" SelectedItem="{Binding SelectedEntry}" IsReadOnly="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Учень" Binding="{Binding StudentName}" IsReadOnly="True" Width="*"/>
+                        <DataGridComboBoxColumn Header="Відмітка" Width="140"
+                                                ItemsSource="{x:Static infra:Lookups.AttendanceStatuses}"
+                                                DisplayMemberPath="Name" SelectedValuePath="Value"
+                                                SelectedValueBinding="{Binding Status, UpdateSourceTrigger=PropertyChanged}"/>
+                        <DataGridTextColumn Header="Примітка" Binding="{Binding Note}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+            <Border Grid.Column="2" Style="{StaticResource FormPanel}" Margin="0">
+                <StackPanel>
+                    <TextBlock Text="Оцінювання" Style="{StaticResource Header}"/>
+                    <TextBlock Text="Учень обирається в журналі." TextWrapping="Wrap" Foreground="Gray" Margin="0,0,0,8"/>
+                    <TextBlock Text="{Binding SelectedEntry.StudentName}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                    <Label Content="Вид оцінювання"/>
+                    <ComboBox ItemsSource="{x:Static infra:Lookups.GradeTypes}" DisplayMemberPath="Name"
+                              SelectedValuePath="Value" SelectedValue="{Binding GradeType}"/>
+                    <Label Content="Оцінка (1–12)"/>
+                    <ComboBox ItemsSource="{x:Static infra:Lookups.Scores}" SelectedItem="{Binding Score}"/>
+                    <Label Content="Коментар"/>
+                    <TextBox Text="{Binding Comment}" Height="60" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    <Button Content="Виставити оцінку" Command="{Binding GradeCommand}" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</UserControl>
