@@ -1,0 +1,49 @@
+<UserControl x:Class="DrivingSchool.App.Views.BookingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:infra="clr-namespace:DrivingSchool.App.Infrastructure">
+    <DockPanel Margin="6">
+        <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" Foreground="Gray" Margin="0,6,0,0"/>
+        <StackPanel DockPanel.Dock="Top">
+            <WrapPanel>
+                <TextBlock Text="Учень:" VerticalAlignment="Center" Margin="0,0,6,8"/>
+                <ComboBox Width="280" ItemsSource="{Binding Students}" DisplayMemberPath="FullName" SelectedItem="{Binding Student}"/>
+                <Button Content="◀ Попередній" Command="{Binding PrevWeekCommand}" Margin="16,0,6,8"/>
+                <Button Content="Наступний ▶" Command="{Binding NextWeekCommand}" Margin="0,0,6,8"/>
+                <TextBlock Text="{Binding WeekTitle}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="8,0,0,8"/>
+            </WrapPanel>
+            <TextBlock Text="{Binding StudentInfo}" Margin="0,0,0,8" Foreground="#1F5FA8"/>
+        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.Column="0" Margin="0,0,10,0">
+                <TextBlock DockPanel.Dock="Top" Text="Вільні слоти водіння" Style="{StaticResource Header}"/>
+                <Button DockPanel.Dock="Bottom" Content="Записати на обраний слот" Command="{Binding BookCommand}"
+                        Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left" Margin="0,8,0,0"/>
+                <DataGrid ItemsSource="{Binding FreeSlots}" SelectedItem="{Binding SelectedSlot}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="День" Binding="{Binding Day}" Width="120"/>
+                        <DataGridTextColumn Header="Час" Binding="{Binding Time}" Width="95"/>
+                        <DataGridTextColumn Header="Інструктор" Binding="{Binding Instructor}" Width="*"/>
+                        <DataGridTextColumn Header="Автомобіль" Binding="{Binding Place}" Width="1.3*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+            <DockPanel Grid.Column="1">
+                <TextBlock DockPanel.Dock="Top" Text="Майбутні записи учня" Style="{StaticResource Header}"/>
+                <Button DockPanel.Dock="Bottom" Content="Скасувати запис" Command="{Binding CancelCommand}"
+                        HorizontalAlignment="Left" Margin="0,8,0,0"/>
+                <DataGrid ItemsSource="{Binding Bookings}" SelectedItem="{Binding SelectedBooking}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="День" Binding="{Binding Day}" Width="110"/>
+                        <DataGridTextColumn Header="Час" Binding="{Binding Time}" Width="90"/>
+                        <DataGridTextColumn Header="Інструктор" Binding="{Binding Instructor}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</UserControl>
