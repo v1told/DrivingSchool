@@ -1,0 +1,39 @@
+<UserControl x:Class="DrivingSchool.App.Views.GroupsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:infra="clr-namespace:DrivingSchool.App.Infrastructure">
+    <DockPanel Margin="6">
+        <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" Foreground="Gray" Margin="0,6,0,0"/>
+        <Border DockPanel.Dock="Right" Width="300" Style="{StaticResource FormPanel}">
+            <StackPanel>
+                <TextBlock Text="Навчальна група" Style="{StaticResource Header}"/>
+                <Label Content="Назва групи"/>
+                <TextBox Text="{Binding Edit.Name}"/>
+                <Label Content="Категорія"/>
+                <ComboBox ItemsSource="{x:Static infra:Lookups.Categories}" DisplayMemberPath="Name"
+                          SelectedValuePath="Value" SelectedValue="{Binding Edit.Category}"/>
+                <Label Content="Початок навчання"/>
+                <DatePicker SelectedDate="{Binding Edit.StartDate}"/>
+                <Label Content="Завершення навчання"/>
+                <DatePicker SelectedDate="{Binding Edit.EndDate}"/>
+                <Label Content="Аудиторія"/>
+                <TextBox Text="{Binding Edit.Classroom}"/>
+                <WrapPanel Margin="0,8,0,0">
+                    <Button Content="Нова" Command="{Binding NewCommand}"/>
+                    <Button Content="Зберегти" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}"/>
+                    <Button Content="Видалити" Command="{Binding DeleteCommand}"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+        <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Група" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn Header="Кат." Binding="{Binding Category}" Width="45"/>
+                <DataGridTextColumn Header="Початок" Binding="{Binding StartDate, StringFormat=dd.MM.yyyy}" Width="*"/>
+                <DataGridTextColumn Header="Завершення" Binding="{Binding EndDate, StringFormat=dd.MM.yyyy}" Width="*"/>
+                <DataGridTextColumn Header="Аудиторія" Binding="{Binding Classroom}" Width="*"/>
+                <DataGridTextColumn Header="Учнів" Binding="{Binding Students.Count}" Width="60"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

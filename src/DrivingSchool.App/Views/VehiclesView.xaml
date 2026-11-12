@@ -1,0 +1,38 @@
+<UserControl x:Class="DrivingSchool.App.Views.VehiclesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:infra="clr-namespace:DrivingSchool.App.Infrastructure">
+    <DockPanel Margin="6">
+        <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" Foreground="Gray" Margin="0,6,0,0"/>
+        <Border DockPanel.Dock="Right" Width="300" Style="{StaticResource FormPanel}">
+            <StackPanel>
+                <TextBlock Text="Навчальний автомобіль" Style="{StaticResource Header}"/>
+                <Label Content="Марка та модель"/>
+                <TextBox Text="{Binding Edit.Model}"/>
+                <Label Content="Номерний знак (АА1234ВВ)"/>
+                <TextBox Text="{Binding Edit.PlateNumber}"/>
+                <Label Content="Категорія"/>
+                <ComboBox ItemsSource="{x:Static infra:Lookups.Categories}" DisplayMemberPath="Name"
+                          SelectedValuePath="Value" SelectedValue="{Binding Edit.Category}"/>
+                <Label Content="Коробка передач"/>
+                <ComboBox ItemsSource="{x:Static infra:Lookups.Transmissions}" DisplayMemberPath="Name"
+                          SelectedValuePath="Value" SelectedValue="{Binding Edit.Transmission}"/>
+                <CheckBox Content="Справний, доступний для занять" IsChecked="{Binding Edit.IsAvailable}"/>
+                <WrapPanel Margin="0,8,0,0">
+                    <Button Content="Новий" Command="{Binding NewCommand}"/>
+                    <Button Content="Зберегти" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}"/>
+                    <Button Content="Видалити" Command="{Binding DeleteCommand}"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+        <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="2*"/>
+                <DataGridTextColumn Header="Номер" Binding="{Binding PlateNumber}" Width="*"/>
+                <DataGridTextColumn Header="Кат." Binding="{Binding Category}" Width="45"/>
+                <DataGridTextColumn Header="КПП" Binding="{Binding TransmissionName}" Width="*"/>
+                <DataGridCheckBoxColumn Header="Доступний" Binding="{Binding IsAvailable}" Width="80"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>
