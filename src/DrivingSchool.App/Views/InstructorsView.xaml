@@ -1,0 +1,42 @@
+<UserControl x:Class="DrivingSchool.App.Views.InstructorsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:infra="clr-namespace:DrivingSchool.App.Infrastructure">
+    <DockPanel Margin="6">
+        <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" Foreground="Gray" Margin="0,6,0,0"/>
+        <Border DockPanel.Dock="Right" Width="300" Style="{StaticResource FormPanel}">
+            <StackPanel>
+                <TextBlock Text="Картка викладача" Style="{StaticResource Header}"/>
+                <Label Content="Прізвище"/>
+                <TextBox Text="{Binding Edit.LastName}"/>
+                <Label Content="Ім'я"/>
+                <TextBox Text="{Binding Edit.FirstName}"/>
+                <Label Content="По батькові"/>
+                <TextBox Text="{Binding Edit.MiddleName}"/>
+                <Label Content="Телефон"/>
+                <TextBox Text="{Binding Edit.Phone}"/>
+                <Label Content="Стаж, років"/>
+                <TextBox Text="{Binding Edit.ExperienceYears}"/>
+                <CheckBox Content="Викладає теорію" IsChecked="{Binding Edit.TeachesTheory}"/>
+                <CheckBox Content="Проводить практичне водіння" IsChecked="{Binding Edit.TeachesDriving}"/>
+                <Label Content="Закріплений автомобіль"/>
+                <ComboBox ItemsSource="{Binding Vehicles}" DisplayMemberPath="DisplayName"
+                          SelectedValuePath="Id" SelectedValue="{Binding Edit.VehicleId}"/>
+                <WrapPanel Margin="0,8,0,0">
+                    <Button Content="Новий" Command="{Binding NewCommand}"/>
+                    <Button Content="Зберегти" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}"/>
+                    <Button Content="Видалити" Command="{Binding DeleteCommand}"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+        <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ПІБ" Binding="{Binding FullName}" Width="2*"/>
+                <DataGridTextColumn Header="Роль" Binding="{Binding RoleName}" Width="1.5*"/>
+                <DataGridTextColumn Header="Автомобіль" Binding="{Binding Vehicle.DisplayName}" Width="1.5*"/>
+                <DataGridTextColumn Header="Стаж" Binding="{Binding ExperienceYears}" Width="60"/>
+                <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

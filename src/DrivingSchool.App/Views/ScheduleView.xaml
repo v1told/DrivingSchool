@@ -1,0 +1,72 @@
+<UserControl x:Class="DrivingSchool.App.Views.ScheduleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:infra="clr-namespace:DrivingSchool.App.Infrastructure">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+    <DockPanel Margin="6">
+        <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" Foreground="Gray" Margin="0,6,0,0"/>
+        <Border DockPanel.Dock="Right" Width="300" Style="{StaticResource FormPanel}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Нове заняття" Style="{StaticResource Header}"/>
+                    <Label Content="Вид заняття"/>
+                    <ComboBox ItemsSource="{x:Static infra:Lookups.LessonKinds}" DisplayMemberPath="Name"
+                              SelectedValuePath="Value" SelectedValue="{Binding NewKind}"/>
+                    <Label Content="Дата"/>
+                    <DatePicker SelectedDate="{Binding NewDate}"/>
+                    <Label Content="Час початку (ГГ:ХХ)"/>
+                    <TextBox Text="{Binding NewTime}"/>
+                    <Label Content="Викладач / інструктор"/>
+                    <ComboBox ItemsSource="{Binding Instructors}" DisplayMemberPath="FullName" SelectedItem="{Binding NewInstructor}"/>
+                    <StackPanel Visibility="{Binding IsTheory, Converter={StaticResource BoolToVis}}">
+                        <Label Content="Група"/>
+                        <ComboBox ItemsSource="{Binding Groups}" DisplayMemberPath="Name" SelectedItem="{Binding NewGroup}"/>
+                    </StackPanel>
+                    <Label Content="Тема"/>
+                    <TextBox Text="{Binding NewTopic}"/>
+                    <Button Content="Додати до розкладу" Command="{Binding AddCommand}" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left"/>
+
+                    <Separator Margin="0,10"/>
+                    <TextBlock Text="Перенесення обраного заняття" Style="{StaticResource Header}"/>
+                    <Label Content="Нова дата"/>
+                    <DatePicker SelectedDate="{Binding MoveDate}"/>
+                    <Label Content="Новий час (ГГ:ХХ)"/>
+                    <TextBox Text="{Binding MoveTime}"/>
+                    <WrapPanel>
+                        <Button Content="Перенести" Command="{Binding MoveCommand}"/>
+                        <Button Content="Скасувати заняття" Command="{Binding CancelCommand}"/>
+                    </WrapPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+        <DockPanel>
+            <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+                <Button Content="◀ Попередній" Command="{Binding PrevWeekCommand}"/>
+                <Button Content="Поточний" Command="{Binding TodayCommand}"/>
+                <Button Content="Наступний ▶" Command="{Binding NextWeekCommand}"/>
+                <TextBlock Text="{Binding WeekTitle}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="8,0,16,6"/>
+                <Button Content="Сформувати розклад тижня" Command="{Binding GenerateCommand}" Style="{StaticResource PrimaryButton}"/>
+            </WrapPanel>
+            <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                <TextBlock Text="Викладач:" VerticalAlignment="Center" Margin="0,0,6,8"/>
+                <ComboBox Width="200" ItemsSource="{Binding Instructors}" DisplayMemberPath="ShortName" SelectedItem="{Binding FilterInstructor}"/>
+                <TextBlock Text="Група:" VerticalAlignment="Center" Margin="12,0,6,8"/>
+                <ComboBox Width="120" ItemsSource="{Binding Groups}" DisplayMemberPath="Name" SelectedItem="{Binding FilterGroup}"/>
+                <Button Content="Скинути фільтри" Command="{Binding ClearFiltersCommand}" Margin="12,0,0,8"/>
+            </WrapPanel>
+            <DataGrid ItemsSource="{Binding Lessons}" SelectedItem="{Binding Selected}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="День" Binding="{Binding Day}" Width="120"/>
+                    <DataGridTextColumn Header="Час" Binding="{Binding Time}" Width="95"/>
+                    <DataGridTextColumn Header="Вид" Binding="{Binding Kind}" Width="70"/>
+                    <DataGridTextColumn Header="Викладач" Binding="{Binding Instructor}" Width="*"/>
+                    <DataGridTextColumn Header="Група / учень" Binding="{Binding Participants}" Width="*"/>
+                    <DataGridTextColumn Header="Аудиторія / авто" Binding="{Binding Place}" Width="1.3*"/>
+                    <DataGridTextColumn Header="Стан" Binding="{Binding Status}" Width="95"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+    </DockPanel>
+</UserControl>
